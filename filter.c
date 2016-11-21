@@ -1,5 +1,6 @@
 #include "filter.h"
 
+#define PI 3.14159265
 #define TAPS 61
 
 static double filter_taps[TAPS] = {-0.000000, 0.000210, 0.000513, 0.000732, 0.000620, -0.000000, -0.001071, -0.002209, -0.002771, -0.002120, -0.000000, 0.003144, 0.006115, 0.007296, 0.005349, 0.000000, -0.007422, -0.014079, -0.016480, -0.011920, -0.000000, 0.016427, 0.031443, 0.037550, 0.028119, 0.000000, -0.044683, -0.098351, -0.149649, -0.186566, 0.800000, -0.186566, -0.149649, -0.098351, -0.044683, 0.000000, 0.028119, 0.037550, 0.031443, 0.016427, -0.000000, -0.011920, -0.016480, -0.014079, -0.007422, 0.000000, 0.005349, 0.007296, 0.006115, 0.003144, -0.000000, -0.002120, -0.002771, -0.002209, -0.001071, -0.000000, 0.000620, 0.000732, 0.000513, 0.000210, -0.000000};
@@ -7,6 +8,9 @@ static double filter_taps[TAPS] = {-0.000000, 0.000210, 0.000513, 0.000732, 0.00
 
 // Holds leftover samples for next batch
 jaudio_t overbuff[TAPS-1]; 
+
+// Holds counter for next batch
+unsigned long counter = 0; 
 	
 
 void init_filter(){
@@ -14,10 +18,12 @@ void init_filter(){
 		overbuff[i] = 0;
 }
 
-int filter(jaudio_t* input, jaudio_t* output)
+int filter(jaudio_t* input, jaudio_t* output, jack_nframes_t num_frames)
 {
+	for(int frame=0; frame<num_frames; frame++)
+		output[frame] = cos((counter+frame)/PI);	
 
-	
+	counter += num_frames; 
 	return 0; 
 } 
 

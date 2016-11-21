@@ -36,8 +36,11 @@ process (jack_nframes_t nframes, void *arg)
 	
 	in = jack_port_get_buffer (input_port, nframes);
 	out = jack_port_get_buffer (output_port, nframes);
-	memcpy (out, in,
-		sizeof (jack_default_audio_sample_t) * nframes);
+
+	// Send to my filter
+	filter(in, out, nframes); 
+
+	//memcpy (out, in, sizeof (jack_default_audio_sample_t) * nframes);
 
 	fprintf (stderr, "Processed %d frames\n", nframes);
 
