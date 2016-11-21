@@ -20,6 +20,14 @@ void init_filter(){
 
 int filter(jaudio_t* input, jaudio_t* output, jack_nframes_t num_frames)
 {
+	// Perform safety check to ensure num_frames is big enough
+	if(TAPS > num_frames){
+		for(int frame=0; frame<num_frames; frame++){
+			output[frame] = 0;
+		}
+		fprintf (stderr, "ERROR!\tBuffer Size (num_frames=%d) is less than the overflow buffer (overbuff=%d frames\n", num_frames, TAPS-1);
+	}
+
 	// Make combined buffer
 	jaudio_t * comb = (jaudio_t*)malloc(sizeof(jaudio_t)*((TAPS-1)+num_frames));
 
