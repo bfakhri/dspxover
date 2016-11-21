@@ -12,6 +12,8 @@
 
 #include <jack/jack.h>
 
+#include "filter.h"
+
 jack_port_t *input_port;
 jack_port_t *output_port;
 jack_client_t *client;
@@ -25,53 +27,7 @@ jack_client_t *client;
  * the user (e.g. using Ctrl-C on a unix-ish operating system)
  */
 
-/*
 
-FIR filter designed with
-http://t-filter.appspot.com
-
-sampling frequency: 2000 Hz
-
-* 0 Hz - 400 Hz
-  gain = 1
-  desired ripple = 5 dB
-  actual ripple = 4.1393894966071585 dB
-
-* 500 Hz - 1000 Hz
-  gain = 0
-  desired attenuation = -40 dB
-  actual attenuation = -40.07355419274887 dB
-
-*/
-
-#define FILTER_TAP_NUM 21
-
-static double filter_taps[FILTER_TAP_NUM] = {
-  -0.02010411882885732,
-  -0.05842798004352509,
-  -0.061178403647821976,
-  -0.010939393385338943,
-  0.05125096443534972,
-  0.033220867678947885,
-  -0.05655276971833928,
-  -0.08565500737264514,
-  0.0633795996605449,
-  0.310854403656636,
-  0.4344309124179415,
-  0.310854403656636,
-  0.0633795996605449,
-  -0.08565500737264514,
-  -0.05655276971833928,
-  0.033220867678947885,
-  0.05125096443534972,
-  -0.010939393385338943,
-  -0.061178403647821976,
-  -0.05842798004352509,
-  -0.02010411882885732
-};
-
-
-jack_default_audio_sample_t left_buffer[FILTER_TAP_NUM-1]; 
 
 int
 process (jack_nframes_t nframes, void *arg)
@@ -79,29 +35,11 @@ process (jack_nframes_t nframes, void *arg)
 	jack_default_audio_sample_t *in, *out;
 	
 	in = jack_port_get_buffer (input_port, nframes);
-
-	jack_default_audio_sample_t * combined = (jack_default_audio_sample_t*)malloc(sizeof(jack_default_audio_sample_t)*nframes + sizeof(jack_default_audio_sample_t)*(FILTER_TAP_NUM-1)); 
-
-	// Copy Left Buffer into the Combined Buffer
-	memcpy(combined, left_buffer, sizeof(jack_default_audio_sample_t)*(FILTER_TAP_NUM-1));
-	// Copy Input Buffer into the Combined Buffer
-	memcpy(combined+(FILTER_TAP_NUM-1), in, sizeof(jack_default_audio_sample_t)*(nframes - (FILTER_TAP_NUM-1)));
-	
-
-	for(int f=0; f<nframes; f++){
-		in[f] = 0; 
-		for(int t=0; t<FILTER_TAP_NUM; t++){
-			in[f] += filter_taps[t]*combined[f+t];
-		}
-	}
-
 	out = jack_port_get_buffer (output_port, nframes);
 	memcpy (out, in,
 		sizeof (jack_default_audio_sample_t) * nframes);
 
-	memcpy(left_buffer, combined+nframes, sizeof (jack_default_audio_sample_t)*(FILTER_TAP_NUM-1));
-
-	fprintf (stderr, "Scooted %d frames\n", nframes);
+	fprintf (stderr, "Processed %d frames\n", nframes);
 
 	return 0;      
 }
@@ -121,8 +59,7 @@ int
 main (int argc, char *argv[])
 {
 	// Clears the left buffer
-	for(int i=0; i<FILTER_TAP_NUM-1; i++)
-		left_buffer[i] = 0;
+	init_filter(); 
 
 	const char **ports;
 	const char *client_name = "simple";
