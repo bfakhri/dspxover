@@ -1,8 +1,5 @@
-/** @file simple_client.c
- *
- * @brief This simple client demonstrates the most basic features of JACK
- * as they would be used by many applications.
- */
+// File based off of JACK's simple_client.c
+// Modified by bfakhri to perform DSP filtering
 
 #include <stdio.h>
 #include <errno.h>
@@ -65,7 +62,7 @@ main (int argc, char *argv[])
 	init_filter(); 
 
 	const char **ports;
-	const char *client_name = "simple";
+	const char *client_name = "DSP_Filter";
 	const char *server_name = NULL;
 	jack_options_t options = JackNullOption;
 	jack_status_t status;
