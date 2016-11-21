@@ -89,15 +89,17 @@ process (jack_nframes_t nframes, void *arg)
 	
 
 	for(int f=0; f<nframes; f++){
-		out[f] = 0; 
+		in[f] = 0; 
 		for(int t=0; t<FILTER_TAP_NUM; t++){
-			out[f] += filter_taps[t]*combined[f+t];
+			in[f] += filter_taps[t]*combined[f+t];
 		}
 	}
 
 	out = jack_port_get_buffer (output_port, nframes);
 	memcpy (out, in,
 		sizeof (jack_default_audio_sample_t) * nframes);
+
+	memcpy(left_buffer, combined+nframes, sizeof (jack_default_audio_sample_t)*(FILTER_TAP_NUM-1));
 
 	fprintf (stderr, "Scooted %d frames\n", nframes);
 
@@ -111,6 +113,7 @@ process (jack_nframes_t nframes, void *arg)
 void
 jack_shutdown (void *arg)
 {
+	fprintf (stderr, "Proper Shutdown\n");
 	exit (1);
 }
 
