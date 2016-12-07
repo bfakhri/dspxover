@@ -12,7 +12,8 @@
 #include "filter.h"
 
 jack_port_t *input_port;
-jack_port_t *output_port;
+jack_port_t *output_port_high;
+jack_port_t *output_port_low;
 jack_client_t *client;
 
 /**
@@ -29,17 +30,19 @@ jack_client_t *client;
 int
 process (jack_nframes_t nframes, void *arg)
 {
-	jack_default_audio_sample_t *in, *out;
+	jack_default_audio_sample_t *in, *out_high, *out_low;
 	
 	in = jack_port_get_buffer (input_port, nframes);
-	out = jack_port_get_buffer (output_port, nframes);
+	out_high = jack_port_get_buffer (output_port_high, nframes);
+	out_low = jack_port_get_buffer (output_port_low, nframes);
 
 	// Send to my filter
-	filter(in, out, nframes); 
+	filter_hp(in, out_high, nframes); 
+	filter_lp(in, out_low, nframes); 
 
 	//memcpy (out, in, sizeof (jack_default_audio_sample_t) * nframes);
 
-	fprintf (stderr, "Processed %d frames\n", nframes);
+	//fprintf (stderr, "Processed %d frames\n", nframes);
 
 	return 0;      
 }
@@ -59,7 +62,7 @@ int
 main (int argc, char *argv[])
 {
 	// Clears the left buffer
-	init_filter(); 
+	init_filters(); 
 
 	const char **ports;
 	const char *client_name = "DSP_Filter";
@@ -110,11 +113,15 @@ main (int argc, char *argv[])
 	input_port = jack_port_register (client, "input",
 					 JACK_DEFAULT_AUDIO_TYPE,
 					 JackPortIsInput, 0);
-	output_port = jack_port_register (client, "output",
+	output_port_high = jack_port_register (client, "output_high",
 					  JACK_DEFAULT_AUDIO_TYPE,
 					  JackPortIsOutput, 0);
 
-	if ((input_port == NULL) || (output_port == NULL)) {
+	output_port_low = jack_port_register (client, "output_low",
+					  JACK_DEFAULT_AUDIO_TYPE,
+					  JackPortIsOutput, 0);
+
+	if ((input_port == NULL) || (output_port_high == NULL) || (output_port_low == NULL)) {
 		fprintf(stderr, "no more JACK ports available\n");
 		exit (1);
 	}
@@ -155,7 +162,10 @@ main (int argc, char *argv[])
 		exit (1);
 	}
 
-	if (jack_connect (client, jack_port_name (output_port), ports[0])) {
+	if (jack_connect (client, jack_port_name (output_port_high), ports[0])) {
+		fprintf (stderr, "cannot connect output ports\n");
+	}
+	if (jack_connect (client, jack_port_name (output_port_low), ports[0])) {
 		fprintf (stderr, "cannot connect output ports\n");
 	}
 
