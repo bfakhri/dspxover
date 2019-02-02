@@ -17,5 +17,11 @@ Using a digital crossover, the signal is paritioned into bands BEFORE amplificat
 ## Requirements
 libjack-dev: sudo apt-get install libjack-dev
 
+## Practical Implementation 
 
-
+![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_194026.jpg "Analog Crossover Block Diagram")
+![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_201337.jpg "Analog Crossover Block Diagram")
+![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_202133.jpg "Analog Crossover Block Diagram")
+![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_202140.jpg "Analog Crossover Block Diagram")
+![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_210647.jpg "Analog Crossover Block Diagram")
+![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_210720.jpg "Analog Crossover Block Diagram")
