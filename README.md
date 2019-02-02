@@ -19,13 +19,11 @@ libjack-dev: sudo apt-get install libjack-dev
 
 ## Practical Implementation 
 
-Loudspeaker:
-![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_210647.jpg "Analog Crossover Block Diagram")
-Removing drivers:
+### Removing drivers:
 ![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_210720.jpg "Analog Crossover Block Diagram")
-Woofer terminals:
+### Woofer terminals:
 ![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_202133.jpg "Analog Crossover Block Diagram")
-Tweeter extraction:
+### Tweeter extraction:
 ![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_201337.jpg "Analog Crossover Block Diagram")
-Analog crossover to be replaced:
+### Analog crossover to be replaced:
 ![alt text](https://github.com/bfakhri/dspxover/blob/master/images/20161206_194026.jpg "Analog Crossover Block Diagram")
